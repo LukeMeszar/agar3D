@@ -14,14 +14,16 @@ app.get('/', function(req, res){
 io.on('connection', function(socket){
     socket.on(loginFunc, function(username){
         var userid = guid();
+        var socketid = socket.id;
         var player = new classes.Player(username);
         player.id = userid;
-        io.emit(loginFunc, player.id + ' ' + player.sayHi());
+        player.socketid = socketid;
+         io.to(socketid).emit(loginFunc, player.id + ' ' + player.sayHi());
         playerList.push(player);
     });
     socket.on(listPlayersFunc, function(){
         var players = listPlayers();
-        io.emit(listPlayersFunc, players);
+        io.to(socket.id).emit(listPlayersFunc, players);
     });
 });
 
