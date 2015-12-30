@@ -12,34 +12,29 @@ app.get('/', function(req, res){
 });
 
 io.on('connection', function(socket){
+    var player = new classes.Player();
     socket.on(loginFunc, function(username){
-        var userid = guid();
-        var socketid = socket.id;
-        var player = new classes.Player(username);
-        player.id = userid;
-        player.socketid = socketid;
-         io.to(socketid).emit(loginFunc, player.id + ' ' + player.sayHi());
+        player.name = username;
+        player.id = socket.id;
+        io.to(socket.id).emit(loginFunc, player.id + ' ' + player.sayHi());
         playerList.push(player);
     });
     socket.on(listPlayersFunc, function(){
         var players = listPlayers();
         io.to(socket.id).emit(listPlayersFunc, players);
     });
+    
+    socket.on('disconnect', function(){
+        removePlayer(socket.id); 
+        console.log('user' + socket.id + 'left');
+    });
 });
 
-http.listen(3000, function(){
-    console.log('listening on *:3000');
-});
 
-function guid() {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000)
-      .toString(16)
-      .substring(1);
-  }
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-    s4() + '-' + s4() + s4() + s4();
-}
+
+http.listen(8080, function(){
+    console.log('listening on *:8080');
+});
 
 function listPlayers(){
     var players = '';
@@ -48,4 +43,14 @@ function listPlayers(){
         players += player.name + ' ' + player.id + '<br/>';
     }
     return players;
+}
+
+function removePlayer(socketid){
+    console.log('socket id pass to removePlayer() ' + socketid);
+    for (var i = 0; i < playerList.length; i++){
+        if (playerList[i].id === socketid){
+            playerList.splice(i, 1);
+        }
+
+    }
 }
