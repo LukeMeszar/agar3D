@@ -1,4 +1,5 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var classes = require('./classes.js');
@@ -6,6 +7,8 @@ var classes = require('./classes.js');
 var playerList = [];
 var loginFunc = 'login';
 var listPlayersFunc = 'listPlayers';
+
+app.use(express.static(__dirname + '/'));
 
 app.get('/', function(req, res){
     res.sendFile(__dirname + '/test.html');
