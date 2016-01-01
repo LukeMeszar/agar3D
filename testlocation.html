@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Agar3D Test Location</title>
+
+  </head>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+  var socket = io();
+  function sendMessage(){
+      var json = {
+          x: $('#x').val(),
+          y: $('#y').val(),
+          z: $('#z').val()
+      };
+      
+      socket.emit('sendLocation', json);     
+  }
+  
+  function sendRandom() {  
+      var high = 10;    
+      var json = {
+          x: Math.floor((Math.random() * high) + 1),
+          y: Math.floor((Math.random() * high) + 1),
+          z: Math.floor((Math.random() * high) + 1)
+      };
+      
+      socket.emit('sendLocation', json);
+  }
+  
+  var interval
+  function startSendingRandom() {
+      interval = setInterval(sendRandom, 500);
+  }
+  function stopSendingRandom() {
+      clearInterval(interval);
+  }
+  
+</script>
+  <body>
+    <ul id="messages"></ul>
+    <form action="" id="form">
+        X:
+      <input type="text" id="x" />
+      <br/>
+      Y:
+      <input type="text" id="y" />
+      <br/>
+      Z:
+      <input type="text" id="z" />
+      <br/>
+      <button type="button" onclick="sendMessage()">Send Cordinates</button>
+      <br/>
+      <button type="button" onclick="startSendingRandom()">Start Sending Random Cordinates</button>
+      <br/>
+      <button type="button" onclick="stopSendingRandom()">Stop Sending Random Cordinates</button>
+    </form>
+  </body>
+  <script>
+        $('#form').submit(function (evt) {
+    evt.preventDefault();
+});
+  </script>
+</html>
